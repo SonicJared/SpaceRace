@@ -3,8 +3,11 @@ PImage ship;
 PImage enemy;
 PImage pLife;
 
+//int screenWidth = 1600;
+//int screenHeight = 800;
+
 void setup(){
-   size(400, 400);
+   size(1600, 800);
    background(10, 10, 84);
    pSlow = loadImage("GemBlue.png");
    ship = loadImage("beetleship.png");
@@ -12,15 +15,15 @@ void setup(){
    pLife = loadImage("Heart.png");
 }
 
-int iWidth = 100;
+int iWidth = 100;  //size of character
 int iHeight = 100;
-int iX = mouseX-iWidth/2;
+int iX = mouseX-iWidth/2;  //coordinates of character
 int iY = mouseY+iHeight/2;
-int eWidth = 100;
+int eWidth = 100;          //enemy size and coordinates
 int eHeight = 100;
-int eX = 350;
+int eX = 1500;
 int eY = 200;
-int eSpeed = 4;
+float eSpeed = 6;
 int spawnRate = 157;
 int spawnTime = 230;
 int spawnSpeed = 10;
@@ -39,20 +42,24 @@ int pY = 0;
 
 void draw(){
     background(10, 10, 84);
-    
-    
-    textSize(10);
+    textSize(15);
     fill(255, 255, 255);
-    text("Lives: " + lives, 0, 13);
-    text("Kills: " + kills, 0, 30);
-    text("Click to fire, shoot the robot, move with your mouse", 0, 385);
+    noCursor();
+    
+//    text("Lives: " + lives, 0, 13);
+    text("Kills: " + kills, 0, 40);
+    text("Click to fire, shoot the robot, move with your mouse", 0, 780);
+    
+    for(int i = 0; i < lives; i++){
+       image(pLife, i*30, 2, 30, 30); 
+    }
     
     
     
     if(mousePressed == true && cooldown < limit){   //Fire the laser
         strokeWeight(15);
         stroke(255, 0, 0);
-        line(mouseX, mouseY, 500, mouseY);
+        line(mouseX, mouseY, displayWidth + 100, mouseY);
     }
     image(ship, mouseX-iWidth/2, mouseY-iHeight/2, iWidth, iHeight);
     
@@ -61,20 +68,19 @@ void draw(){
         eX -= eSpeed;
         if(eX < 0){
             lives -= 1;
-            eX = 390;
+            eX = displayWidth - (eWidth/2);
         }
     }
     if(mousePressed && eX > mouseX && mouseY > eY && mouseY < eY + eHeight && cooldown < limit && spawn == true){
         spawn = false;
-        eX = 350;
-        eY = int(random(30, 326));
+        eX = displayWidth - 10;
+        eY = int(random(30, 700));
         kills += 1;
         if(kills>1){
-            eSpeed += kills/50;
-        spawnSpeed += kills/50;
-        powerup1 += 1;
-        powerup2 += 1;
-        
+           eSpeed += kills/30;
+           spawnSpeed += kills/50;
+           powerup1 += 1;
+           powerup2 += 1;
         }
     }
     if(mousePressed){ //cooldown for the laser
@@ -83,7 +89,10 @@ void draw(){
         cooldown -= 1;
     }
     if(cooldown > limit){
-        text("Cooling down, please cease fire. Degrees over limit: " + (cooldown - 20), 0, 40);
+       // text("Cooling down, please cease fire. Degrees over limit: " + (cooldown - 20), 0, 750);
+        
+        text("OVERHEATING:", 0, 750);
+        rect(130, 740, (cooldown - 20), 10);
     }
     
     if(spawnRate > spawnTime){
@@ -110,7 +119,7 @@ void draw(){
         image(pSlow, pX, pY, 30, 30);
         
         if(mouseX > pX && mouseX < pY + 30 && mouseY > pY && mouseY < pY + 30){
-            eSpeed = 1;
+            eSpeed = 4;
             powerup2 = 0;
         }
     }
@@ -124,16 +133,16 @@ void draw(){
         powerup1 = 0;
         powerup2 = 0;
         fill(0, 0, 0);
-        rect(-30, -30, 450, 450);
+        rect(-30, -30, displayWidth, displayHeight);
         fill(255, 0, 0);
-        rect(100, 100, 200, 150);
+        rect(100, 100, 1400, 600);
         fill(0, 0, 0);
-        textSize(30);
-        text("Game Over", 119, 122);
-        text("Points: " + kills, 126, 156);
-        text("Click here to", 115, 202);
-        text("Restart", 149, 230);
-        if(mousePressed && mouseX < 300 && mouseX > 100 && mouseY < 250 && mouseY > 100){
+        textSize(displayWidth/50);
+        text("Game Over", displayWidth/4, displayHeight/4);
+        text("Points: " + kills, displayWidth/4, displayHeight/4 + 30);
+        text("Click here to", displayWidth/4, displayHeight/4 + 60);
+        text("Restart", displayWidth/4, displayHeight/4 + 100);
+        if(mousePressed && mouseX < 1500 && mouseX > 100 && mouseY < 700 && mouseY > 100){
             lives = 10;
             eSpeed = 4;
             kills = 0;
